@@ -1,0 +1,245 @@
+
+
+memory:
+  2700 = ?
+         - if 1, ???
+           see e.g. dungeon_12B1_0:5439
+  2701 = expram base page num?
+  ~273B = facing direction
+  271A = ? dungeon floor??
+  271F = arle speed?
+         raised by swift herbs
+  2720 = arle ???
+         raised by vigor herbs
+         factors into enemy's chance of double attack, at least...
+  2721 = arle accuracy?
+         raised by focus herbs
+  2722 = arle strength?
+         raised by dopinger z (sometimes)
+  2723 = arle defense?? evasion??
+  2724 = money? (3b bcd)
+  2727 = "karma"?
+         this is what the brightness of the orbs on the HUD represents.
+         goes down if you attack a monster that tries to talk to you;
+         probably goes up if you don't.
+         ...does this actually affect anything?
+  2741 = inventory size
+  2742 = inventory array (1 byte per item)
+  2847 = idle thread frame sync value.
+         set to 0 after idle threads are advanced,
+         and incremented in frame irq handler;
+         idle threads are only advanced if this is nonzero.
+  2848 = current active task slot?
+  2849 = next active task slot?
+  284A = current frame-synced task slot?
+  284B = next frame-synced task slot?
+  - active tasks?
+      284C = call address array lo
+             0x40 entries (as with all the following arrays)
+      288C = call address array hi
+      28CC = task infobyte array
+             - low 3 bits = ?
+                            converted to a bitfield (1 = 0x04, 2 = 0x08, etc.)
+                            and written to $419E
+             - high 5 bits = (target page number - $68)
+               mpr3 will be be loaded with the target page before task is called 
+  - frame-synced tasks?
+    these are called from the interrupt handler rather than the main loop
+      2A4C = call address array lo
+      2A8C = call address array hi
+      ...
+  - idle tasks?
+    see dungeon_12B1_0:4601 for scheduler(?), 42D8 for runner
+      2CDC = thread timer array
+             0x20 entries (as with all the following arrays)
+             if zero, thread does not exist (slot is considered empty).
+             if nonzero, decrement every time the thread runner executes;
+             if it becomes zero, the thread runs.
+             the thread is unconditionally destroyed after running.
+      2CFC = call address array lo
+      2D1C = call address array hi
+      2D3C = ? array
+      2D5C = thread A array
+      2D7C = thread X array
+      2D9C = ? array
+      2DBC = ? array
+      2DDC = ? array
+  3081-3082 = can be "next task" address in text scripts?
+              see 16000:6D9F
+  3083 = can be "next task" infobyte in text scripts?
+  30CB = if nonzero, adpcm is active?
+  30D4-30D6 = array of active script markers??
+              nonzero if active?
+  30DA-30DC = array of window next char X positions
+  30DD-30DF = array of window next char Y positions
+  314D-314E = enemy current hp?
+  3165-3166 = enemy max hp?
+              
+         
+
+
+- the programmers apparently felt they were too good for the BIOS CD read
+  functions and instead reimplemented (or rather, mostly copied) them
+  into the program code, succeeding in wasting large amounts of RAM space
+  and probably development time.
+
+dungeon_12B1:173C3 = 魔導力
+
+** dungeon_12B1 structure **
+  0000-2000 = "main"
+      task running logic, etc.
+  2000-8000: ?
+             used by interrupt handler
+  6000-8000: reimplemented bios stuff.
+             NOTE: data in first 0x1800 bytes also used by previous section!
+  ???
+  14000-16000: various stuff, including loading transition?
+  16000-18000: text script/printing system.
+               also includes various pieces of text with special uses
+               (dungeon floor numbers, monster names, etc.)
+               which are apparently injected into other messages through
+               specific script codes
+  18000-1C000: text group 1
+  1C000-22000: text group 2
+  ???
+  2A000-2C000: ? code?
+  2C000-2E000: ??? data
+  2E000-30000: ? code? dungeon events?
+  30000-32000: ? code?
+  
+
+** dungeon_12B1_0 **
+  data
+    546D = low byte table for dungeon floor arcade card loading struct pointers
+    547B = high byte table for dungeon floor arcade card loading struct pointers
+    5489 = arcade card loading struct arrays.
+           these load specified resources to the arcade card for each
+           dungeon floor.
+           series of structs in format:
+             - 3b LE dst byte position for data in arcade card (absolute byte offset)
+             - 3b LE src sector num for data?
+             - 2b LE size in sectors?
+           struct sequence is terminated with 4 zero bytes.
+
+  routines
+    4509 = addActiveTask
+    4588 = addFrameSyncedTask?
+    4601 = addIdleTask
+           - Y = delay until active
+           - immediately following the call should be a "lda $XXXX" instruction.
+             the "$XXXX" parameter is the address to call for the task.
+           - additional parameters are allowed but not necessary:
+             - "ldx #$XX" -> "$XX" becomes the task infobyte (pagenum + ???)
+             - ?
+
+** dungeon_12B1_6000 **
+  routines
+    981B = readFromCd
+    98A4 = readFromCdToExpRam
+    993B = ???
+
+** dungeon_21B1_16000 **
+  text and printing
+  
+  routines
+    6885 = printing task?
+    
+  memory
+    6811 = script "ret address" stack.
+           5 entries, split low/high byte format.
+           when a script terminates via op 0A, the stack index (681B) is
+           checked.
+           if nonzero, the top word is pulled off the stack, and the
+           script interpreter continues from that point.
+    681B = script "ret address" stack index.
+           if zero, no ret addresses on stack
+           
+** dungeon_21B1_2A000 **
+  common dungeon stuff?  
+  
+  routines
+    63C5 = wait for adpcm to finish
+
+** unknown_1129 **
+  - page 0 = loading screen vram
+
+** intro_21 **
+  memory:
+    001D = 
+    0039 = scene pause?
+    003A = nonzero if sprites are disabled (table will not be sent to VRAM)
+    0041 = cutscene script src pointer
+    0043 = cutscene delay timer
+    0045 = bitfield of buttons that are allowed to be pressed during scene
+    2214 = SAT base address in VRAM?
+    2228 = buttons currently pressed
+    29C5 = palette?
+    75:0200 (A200) = current base palette
+    75:0600 (A600) = current display palette (including active fades, etc.)
+  
+  ** intro_21_0 **
+    42A3 = addActiveTask?
+    4380 = addIdleTask?
+  
+  bank 02 ops
+    21: ??? something with sprites?
+  
+  bank 04 ops
+    
+  bank 08 ops
+    04: copy data from AC card to local buffer
+    05: copy data from AC card to VRAM
+    06: copy data from memory to VRAM
+    1C: unconditional branch of script to absolute address
+    1D: execute arbitrary code (destroying script pointer in the process)
+    26: set sprite table address + send sprites
+  
+  
+9th floor quiz answers
+can you believe no one bothered writing these down anywhere on the internet??
+(see 2E000:~7673 for answer arrays; 01 = no, 00 = yes)
+  quiz 1: N N N N Y
+  quiz 2: N Y Y N N
+  quiz 3: N N N Y N
+
+there's a weird bug where skipping the second intro too quickly causes the
+game to crash. either fix or put a warning somewhere
+  - actually, by holding button 1/2 while pressing start.
+    i cn only hope it's an emulation issue...
+
+full text box is 304x48 pixels
+sidebox is 144x48
+
+0x13800
+
+intro:
+  - data loaded to ac card boot2_1121, parameters at A003.
+  - stored at 0x90800 (sector 0x121), 0x2EC sectors
+preboss:
+  - stored at 0x290800 (sector 0x521), 0x13A sectors
+ending:
+  - stored at 0x490800 (sector 0x921), 0xFC sectors
+
+13B1 = 9d8800: 9D sectors
+921 = 490800: FC sectors
+
+old:
+  x = 2.67
+  y = 3.00
+new:
+  x = 1.185185 = 3.555555
+  y = 1.00 = 3.00
+  
+80c4
+8037
+
+TODO
+  - is there any significance to pause in pakista's "Sorry, that's sold out!"??
+  - startup error message
+  - images:
+    - bayoen
+    - flea
+  - diary floor labels can somehow get erroneously line-broken under some
+    circumstance...
+    - seriously, how did this happen? why can't i get it to happen again??
+

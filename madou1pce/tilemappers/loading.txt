@@ -1,0 +1,22 @@
+#******************************************************************************
+# title tilemap generator script
+#******************************************************************************
+
+[Properties]
+palette=out/pal/loading.pal
+#freepalettes=12/0-15 13/0-15 14/0-15 15/0-15
+dest=out/grp/loading.bin
+paldest=out/pal/loading.pal
+loadAddr=0x100
+#minTiles=0x185
+maxTiles=0x100
+#blacklist=360-363
+
+#******************************************************************************
+# Main layout
+#******************************************************************************
+
+[Tilemap00]
+source=out/grp/loading.png
+dest=out/grp/loading.map
+

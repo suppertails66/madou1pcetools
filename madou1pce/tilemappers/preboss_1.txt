@@ -1,0 +1,22 @@
+#******************************************************************************
+# preboss 1 cutscene patch tilemap generator script
+#******************************************************************************
+
+[Properties]
+palette=out/pal/preboss_0.pal
+freepalettes=5/0-15 6/0-15 7/0-15
+dest=out/cut_patches/preboss_1.bin
+paldest=out/pal/preboss_0.pal
+loadAddr=0x7A8
+#minTiles=0x185
+maxTiles=0x58
+#blacklist=360-363
+
+#******************************************************************************
+# Main layout
+#******************************************************************************
+
+[Tilemap00]
+source=rsrc/cut_patches/preboss_1.png
+dest=out/cut_patches/preboss_1.map
+

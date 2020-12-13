@@ -1,0 +1,23 @@
+#******************************************************************************
+# AC card error tilemap generator script
+#******************************************************************************
+
+[Properties]
+palette=out/pal/error_accard.pal
+#freepalettes=12/0-15 13/0-15 14/0-15 15/0-15
+dest=out/grp/error_accard.bin
+paldest=out/pal/error_accard.pal
+loadAddr=0x100
+#minTiles=0x185
+maxTiles=0xB00
+#blacklist=360-363
+
+#******************************************************************************
+# Main layout
+#******************************************************************************
+
+[Tilemap00]
+source=out/grp/error_accard.png
+dest=out/grp/error_accard.map
+transparency=0
+

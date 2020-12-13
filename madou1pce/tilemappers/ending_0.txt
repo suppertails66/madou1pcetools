@@ -1,0 +1,22 @@
+#******************************************************************************
+# ending 0 cutscene patch tilemap generator script
+#******************************************************************************
+
+[Properties]
+palette=out/pal/ending_0.pal
+freepalettes=8/0-15 9/0-15 10/0-15 11/0-15 12/0-15
+dest=out/cut_patches/ending_0.bin
+paldest=out/pal/ending_0.pal
+loadAddr=0x440
+#minTiles=0x185
+maxTiles=0xC0
+#blacklist=360-363
+
+#******************************************************************************
+# Main layout
+#******************************************************************************
+
+[Tilemap00]
+source=rsrc/cut_patches/ending_0.png
+dest=out/cut_patches/ending_0.map
+

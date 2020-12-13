@@ -1,0 +1,41 @@
+#******************************************************************************
+# title tilemap generator script
+#******************************************************************************
+
+[Properties]
+palette=out/pal/title_logo_mod.pal
+#freepalettes=12/0-15 13/0-15 14/0-15 15/0-15
+dest=out/grp/title.bin
+paldest=out/pal/title_logo_mod.pal
+loadAddr=0x100
+#minTiles=0x185
+maxTiles=0x280
+#blacklist=360-363
+
+#******************************************************************************
+# Main layout
+#******************************************************************************
+
+[Tilemap00]
+source=out/grp/title_wreath.png
+dest=out/grp/title_wreath.map
+
+[Tilemap01]
+source=out/grp/title_main.png
+dest=out/grp/title_main.map
+palette=5
+
+[Tilemap02]
+source=out/grp/title_sub.png
+dest=out/grp/title_sub.map
+
+[Tilemap03]
+source=out/grp/title_background.png
+dest=out/grp/title_background.map
+# the dissolve effect in the intro expects the copyright tiles
+# to appear at VRAM address 0x3000 (where they won't be dissolved
+# in as part of the effect)
+forceTilePrePadding=0x200
+# and we have to use this palette because it's faded in separately
+palette=8
+
