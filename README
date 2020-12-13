@@ -1,0 +1,60 @@
+********************************************************************************
+*            Madou Monogatari I: Honoo no Sotsuenji (PC-Engine CD)             *
+*                     English Translation Patch Materials                      *
+********************************************************************************
+
+This package contains the source materials (code/art/script) for the English 
+translation project for the PC-Engine CD game Madou Monogatari I: Honoo no 
+Sotsuenji.
+
+                    ****************************************
+                    *          Build Instructions          *
+                    ****************************************
+                    
+The build system is only set up for Unix-like systems, though none of the code 
+is fundamentally dependent on this and could be ported with a bit of effort. 
+You'll need GCC, libpng, and ImageMagick (the "convert" utility), as well as any
+dependencies of wla-dx.
+
+You'll first need a disc image of Madou Monogatari I: Honoo no Sotsuenji for the 
+PC-Engine CD. The Redump-verified image is highly suggested, though other images 
+may work if they're a close enough match.
+
+  Redump name: Madou Monogatari I: Honoo no Sotsuenji
+  CRC32:       c9725820
+  MD5:         59c01f94b3c991c3509620430cf95c0a
+  SHA-1:       8e583b2c38736871aa44ba842291f257f9b5af34
+
+The disc image must be in ISO+WAV+CUE format. If you need to convert from a 
+different format, try using bchunk.
+
+Once you have an ISO+WAV+CUE image, rename the files such that every track is 
+named as "madou1_01.wav", "madou1_02.iso", and so on up through "madou1_32.iso". 
+Copy these files into the "madou1pce" directory. Then:
+
+$ cd madou1pce
+$ ./build.sh
+
+build.sh should then build all the necessary tools and output the translated ISO 
+for track 2 as "madou1_02_build.iso". Use the provided "madou1_iso_build.cue" 
+CUE sheet to run the built disc.
+
+If you want to modify the project, check build.sh to see where the resources 
+that get inserted into the game are coming from.
+
+                    ****************************************
+                    *              Licensing               *
+                    ****************************************
+
+See COPYING. Basically, everything by me (Supper) is GPLv3, and everything else
+is under the terms of whoever wrote it.
+
+                    ****************************************
+                    *               Credits                *
+                    ****************************************
+
+                               Supper -- Hacking
+                        TheMajinZenki -- Translation
+                               cccmar -- Editing and Testing
+                             Xanathis -- Testing
+
